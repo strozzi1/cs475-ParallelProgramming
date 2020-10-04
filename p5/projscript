@@ -1,0 +1,23 @@
+#!/bin/bash
+#SBATCH -J ArrayMul
+#SBATCH -A cs475-575
+#SBATCH -p class
+#SBATCH --gres=gpu:1
+#SBATCH -o arraymul.out
+#SBATCH -e arraymul.err
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=strozzij@oregonstate.edu
+for t in 16 32 64 128
+do
+    #echo NUMT = $t
+    # number of subdivisions:
+    for s in 16384 32768 65536 131072 262144 524288 1048576
+    do
+        #echo NUMTRIALS = $s
+        /usr/local/apps/cuda/cuda-10.1/bin/nvcc -DBLOCKSIZE=$t -DNUMTRIALS=$s -o arrayMul arrayMul.cu
+        ./arrayMul
+        echo -n "\n"
+    done
+    echo
+    
+done

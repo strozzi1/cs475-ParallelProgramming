@@ -1,0 +1,23 @@
+#!/bin/bash
+#SBATCH -J project6
+#SBATCH -A cs475-575
+#SBATCH -p class
+#SBATCH --gres=gpu:1
+#SBATCH -o first.out
+#SBATCH -e first.err
+#SBATCH --mail-type=BEGIN,END,FAIL
+#SBATCH --mail-user=strozzij@oregonstate.edu
+for t in 64 128 256
+do
+    #echo NUMT = $t
+    # number of subdivisions:
+    for s in 1 2 4 8
+    do
+        #echo NUMTRIALS = $s
+        g++ -o first first.cpp /usr/local/apps/cuda/cuda-10.1/lib64/libOpenCL.so.1.1 -DLOCAL_SIZE=$t -DNMB=$s -lm -fopenmp -Wno-write-strings
+        ./first
+        ##echo -n "\n"
+    done
+    echo
+    
+done
